@@ -82,14 +82,15 @@ class MainDashboard extends StatefulWidget {
 }
 
 class _MainDashboardState extends State<MainDashboard> {
-  int _currentIndex = 0;
+  int _currentIndex = 0; // 默认停留在“知识精讲”页
 
   @override
   Widget build(BuildContext context) {
-    // 动态生成两个 Tab 页面
+    // 动态生成三个 Tab 页面：学 -> 练 -> 存
     final List<Widget> _pages = [
-      QuizScreen(onQuizFinished: () => setState(() {})), // 答题页
-      MistakeBookScreen(), // 错题本页
+      LearnScreen(), // 新增的知识讲解页
+      QuizScreen(onQuizFinished: () => setState(() {})),
+      MistakeBookScreen(),
     ];
 
     return Scaffold(
@@ -99,14 +100,15 @@ class _MainDashboardState extends State<MainDashboard> {
         onTap: (index) => setState(() => _currentIndex = index),
         selectedItemColor: Colors.teal,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: 'Module 1.3 测试'),
+          BottomNavigationBarItem(icon: Icon(Icons.lightbulb_outline), label: '知识精讲'),
+          BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: 'SUVAT 测试'),
           BottomNavigationBarItem(
             icon: Badge(
-              label: Text('${wrongQuestions.length}'), // 动态显示错题数量
+              label: Text('${wrongQuestions.length}'),
               isLabelVisible: wrongQuestions.isNotEmpty,
               child: Icon(Icons.menu_book),
             ),
-            label: '我的错题本',
+            label: '错题本',
           ),
         ],
       ),
@@ -332,6 +334,95 @@ class MistakeBookScreen extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class LearnScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Module 1.3: SUVAT 运动方程'),
+        backgroundColor: Colors.teal.shade100,
+      ),
+      body: ListView(
+        padding: EdgeInsets.all(16),
+        children: [
+          Text("课前导读：提炼与拔高", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.teal.shade800)),
+          SizedBox(height: 16),
+          
+          // 卡片 1：避坑指南
+          Card(
+            elevation: 2,
+            child: ExpansionTile(
+              initiallyExpanded: true,
+              leading: Icon(Icons.warning_amber_rounded, color: Colors.orange),
+              title: Text("1. 核心心法：永远先定正方向 (The Vector Trap)", style: TextStyle(fontWeight: FontWeight.bold)),
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    "不要把位移 s、速度 v、加速度 a 当成单纯的数字，它们是矢量 (Vectors)！\n\n"
+                    "👉 拔高法则：做题前，强行在图上画一个向上的箭头标上 '+'。如果规定向上为正，抛体上升时 v 为正，重力加速度 a 必须代入 -9.81。",
+                    style: TextStyle(fontSize: 16, height: 1.5),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 12),
+
+          // 卡片 2：决策树
+          Card(
+            elevation: 2,
+            child: ExpansionTile(
+              initiallyExpanded: true,
+              leading: Icon(Icons.account_tree, color: Colors.blue),
+              title: Text("2. 选公式的“缺省法”决策树 (Decision Matrix)", style: TextStyle(fontWeight: FontWeight.bold)),
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("根据题目“没提哪个物理量”一秒选定公式：", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 10),
+                      Text("• 缺位移 s ➡️ 用: v = u + at", style: TextStyle(fontSize: 16, height: 1.5)),
+                      Text("• 缺末速 v ➡️ 用: s = ut + ½at²", style: TextStyle(fontSize: 16, height: 1.5)),
+                      Text("• 缺时间 t ➡️ 用: v² = u² + 2as", style: TextStyle(fontSize: 16, height: 1.5)),
+                      Text("• 缺加速度 a ➡️ 用: s = ½(u+v)t", style: TextStyle(fontSize: 16, height: 1.5)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 12),
+
+          // 卡片 3：降维打击
+          Card(
+            elevation: 2,
+            child: ExpansionTile(
+              initiallyExpanded: true,
+              leading: Icon(Icons.rocket_launch, color: Colors.purple),
+              title: Text("3. 🚀 降维打击：公式是怎么来的？", style: TextStyle(fontWeight: FontWeight.bold)),
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    "剑桥考纲极度重视图像。公式其实是 v-t (速度-时间) 图像的几何特征：\n\n"
+                    "• 公式 1 是求斜率 (Gradient)：直线斜率就是加速度 a = (v-u)/t。\n"
+                    "• 公式 2 是求面积 (Area)：把 v-t 图像切成矩形 (ut) 和三角形 (½(v-u)t)，相加即得位移 s。\n\n"
+                    "💡 这种“切片算面积”的思维，本质上就是 A2 阶段要学的积分学 (Integration) 雏形。",
+                    style: TextStyle(fontSize: 16, height: 1.5),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
